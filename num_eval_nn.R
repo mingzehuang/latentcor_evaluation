@@ -7,8 +7,9 @@ n <- 100
 # will test 9 latent r values.
 latentRseq <- seq(0.05, 0.91, length.out = 9)
 zratioseq1 <- seq(0.04, 0.92, by = 0.04)
-##### check two cases of NN
-type1 <- "ternary"; type2 <- "binary"
+##### check NN
+type1 <- "ternary"; type2 <- "ternary"
+typesh <- "NN"
 # the computation results will be saved in data.frame format
 df_comptime <- df_accuracy <- NULL
 for (trueR in latentRseq){
@@ -58,4 +59,4 @@ for (trueR in latentRseq){
     }
   }
 }
-save(df_comptime, df_accuracy, file = paste0("Data/TwoSim_", typesh, "_rep10.Rda"))
+save(df_comptime, df_accuracy, file = paste0("TwoSim_", typesh, "_rep10.rda"))
