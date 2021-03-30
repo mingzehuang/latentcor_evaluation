@@ -38,7 +38,7 @@ for (trueR in latentRseq){
     capture.output( # suppress the microbenchmark result.
     time_all[i, ] <- print(microbenchmark(
     Kcor_org[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "original", nu = 0, tol = 1e-6)$R12,
-    Kcor_ml[i] <- estimateR_mixed_mlonly(X1 = x1, X2 = x2, type1 = type1, type2 = type2, nu = 0)$R12,
+    Kcor_ml[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, nu = 0)$R12,
     Kcor_mlbd[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "approx", nu = 0, tol = 1e-6)$R12,
     times = 10 # tried ten times
     ), unit = "us")[, 5] # to use fixed unit: "microseconds"
@@ -48,7 +48,7 @@ for (trueR in latentRseq){
   # apply(time_all, 2, summary) # 3rd row gives median value.
   df_comptime <- rbind.data.frame(df_comptime, data.frame(LatentR = trueR, TruncRate = zrate, medianTime = apply(time_all, 2, summary)[3, ], method = c("org", "ipol", "ipol_UB")))
   # save two kinds of errors: maximum absolute error and mean absolute error.
-  df_accuracy <- rbind.data.frame(df_accuracy, data.frame(LatentR = trueR, TruncRate = zrate, MeanAD = c(mean(abs(Kcor_org - Kcor_ml)), mean(abs(Kcor_org - Kcor_mlbd))), MaxAD = c(max(abs(Kcor_org - Kcor_ml)), max(abs(Kcor_org - Kcor_mlbd))), method = c("ipol", "ipol_UB")))
+  df_accuracy <- rbind.data.frame(df_accuracy, data.frame(LatentR = trueR, TruncRate = zrate, MeanAD = c(0, mean(abs(Kcor_org - Kcor_ml)), mean(abs(Kcor_org - Kcor_mlbd))), MaxAD = c(0, max(abs(Kcor_org - Kcor_ml)), max(abs(Kcor_org - Kcor_mlbd))), method = c("org", "ipol", "ipol_UB")))
   cat(typesh, "case: trueR = ", trueR, "\t zrate =", zrate, "\t took ", (proc.time() - ptm)[3], " seconds.\n")
   }
 }
