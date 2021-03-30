@@ -16,8 +16,6 @@ zratioseq <- c(0.04, 0.16, 0.28, 0.36, 0.44, 0.5, 0.56, 0.64, 0.72, 0.84, 0.96)
 type1 <- "binary"; type2 <- "continuous"
 typesh <- "BC"
 # the computation results will be saved in data.frame format
-df_comptime <- df_accuracy <- NULL
-
 cl <- makePSOCKcluster(detectCores())
 registerDoParallel(cl)
 BC_eval <-
@@ -55,5 +53,4 @@ BC_eval <-
     #cat(typesh, "case: trueR = ", trueR, "\t zrate =", zrate, "\t took ", (proc.time() - ptm)[3], " seconds.\n")
   }
 stopCluster(cl)
-BC_eval
 save(BC_eval, file = "BC_eval.rda")

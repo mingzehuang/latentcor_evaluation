@@ -16,6 +16,8 @@ zratioseq <- c(0.04, 0.16, 0.28, 0.36, 0.44, 0.5, 0.56, 0.64, 0.72, 0.84, 0.96)
 type1 <- "trunc"; type2 <- "continuous"
 typesh <- "TC"
 # the computation results will be saved in data.frame format
+cl <- makePSOCKcluster(detectCores())
+registerDoParallel(cl)
 TC_eval <-
 foreach (trueR = 1:length(latentRseq), .combine = rbind) %:%
   foreach (zrate = 1:length(zratioseq), .combine = rbind) %dopar% {
@@ -50,4 +52,5 @@ foreach (trueR = 1:length(latentRseq), .combine = rbind) %:%
     # apply(time_all, 2, summary) # 3rd row gives median value.
     TC_eval <- data.frame(LatentR = latentRseq[trueR], TruncRate = zratioseq[zrate], MeanAD = c(0, mean(abs(Kcor_org - Kcor_ml)), mean(abs(Kcor_org - Kcor_mlbd))), MaxAD = c(0, max(abs(Kcor_org - Kcor_ml)), max(abs(Kcor_org - Kcor_mlbd))), medianTime = apply(time_all, 2, summary)[3, ], method = c("org", "ipol", "ipol_UB"))
   }
+stopCluster(cl)
 save(TC_eval, file = "TC_eval.rda")
