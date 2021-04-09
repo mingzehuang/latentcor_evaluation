@@ -4,59 +4,44 @@ library(microbenchmark)
 nrep <- 100
 # sample size
 n <- 100
-# will test 9 latent r values.
-latentRseq <- seq(0.05, 0.91, length.out = 9)
-zratioseq1 <- seq(0.04, 0.92, by = 0.04)
+# will test 19 latent r and 9 zero proportion values.
+latentRseq <- seq(-0.9, 0.9, by = 0.1)
+zratioseq <- c(0.2, 0.8, by = 0.1)
 ##### check NN
 type1 <- "ternary"; type2 <- "ternary"
-typesh <- "NN"
-# the computation results will be saved in data.frame format
-df_comptime <- df_accuracy <- NULL
-for (trueR in latentRseq){
-  for (zrate11 in zratioseq1){
-    zratioseq12 = seq(zrate11 + 0.04, 0.96, by = 0.04)
-    for (zrate21 in zratioseq1){
-      for (zrate12 in zratioseq12){
-        zratioseq22 = seq(zrate21 + 0.04, 0.96, by = 0.04)
-        for (zrate22 in zratioseq22){
-          # initialize for every combination
-          Kcor_org <- Kcor_ml <- Kcor_mlbd <- rep(NA, nrep)
-          time_org <- time_ml <- time_mlbd <- rep(NA, nrep)
-          time_all <- matrix(NA, nrow = nrep, ncol = 3)
-          ptm <- proc.time()
-          set.seed(123)
-          for(i in 1:nrep){
-            # generate bivariate normal
-            z <- MASS::mvrnorm(n, mu = c(0, 0), Sigma = matrix(c(1, trueR, trueR, 1), nrow=2))
-            z1shift <- quantile(z[, 1], c(zrate11, zrate12))
-            z2shift <- quantile(z[, 2], c(zrate21, zrate22))
-            z1 <- z[, 1] - z1shift[1]
-            z2 <- z[, 2] - z2shift[1]
-            u1 <- ifelse(z1 > z1shift[2], 2, 1)
-            u1[z1 <= 0] = 0
-            u2 <- ifelse(z2 > z2shift[2], 2, 1)
-            u2[z2 <= 0] = 0
-          }
-          # didn't apply any transformation.
-          x1 <- u1
-          x2 <- u2
-          capture.output( # suppress the microbenchmark result.
-            time_all[i, ] <- print(microbenchmark(
-              Kcor_org[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "original", nu = 0, tol = 1e-6)$R12,
-              Kcor_ml[i] <- estimateR_mixed_mlonly(X1 = x1, X2 = x2, type1 = type1, type2 = type2, nu = 0)$R12,
-              Kcor_mlbd[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "approx", nu = 0, tol = 1e-6)$R12,
-              times = 10 # tried ten times
-            ), unit = "us")[, 5] # to use fixed unit: "microseconds"
-            # 5th column has median value
-          )
-        }
-        # apply(time_all, 2, summary) # 3rd row gives median value.
-        df_comptime <- rbind.data.frame(df_comptime, data.frame(LatentR = trueR, TruncRate = zrate, medianTime = apply(time_all, 2, summary)[3, ], method = c("org", "ipol", "ipol_UB")))
-        # save two kinds of errors: maximum absolute error and mean absolute error.
-        df_accuracy <- rbind.data.frame(df_accuracy, data.frame(LatentR = trueR, TruncRate = zrate, MeanAD = c(mean(abs(Kcor_org - Kcor_ml)), mean(abs(Kcor_org - Kcor_mlbd))), MaxAD = c(max(abs(Kcor_org - Kcor_ml)), max(abs(Kcor_org - Kcor_mlbd))), method = c("ipol", "ipol_UB")))
-        cat(typesh, "case: trueR = ", trueR, "\t zrate11 =", zrate11, "\t zrate12 =", zrate12, "\t zrate21 =", zrate21, "\t zrate22 =", zrate22, "\t took ", (proc.time() - ptm)[3], " seconds.\n")
+# the computation results will be saved
+MedianTime <- array(NA, c(length(latentRseq), length(zratioseq), 3))
+MeanAE <- MaxAE <- array(NA, c(length(latentRseq), length(zratioseq), 5))
+for (trueR in 1:length(latentRseq)){
+  for (zrate in 1:length(zratioseq)){
+    zrate2 <- zratioseq[zrate] + (1 - zratioseq[zrate]) / 2
+    zrate21 <- zratioseq[zrate] / 2
+    zrate22 <- zrate2 / 2
+    # initialize for every combination
+    time_org <- time_ml <- time_mlbd <- Kcor_org <- Kcor_ml <- Kcor_mlbd <- AE <- rep(NA, nrep)
+    set.seed(123)
+    for(i in 1:nrep){
+      # generate bivariate normal
+      z <- MASS::mvrnorm(n, mu = c(0, 0), Sigma = matrix(c(1, trueR, trueR, 1), nrow=2))
+      z1shift <- quantile(z[, 1], c(zrate11, zrate12))
+      z2shift <- quantile(z[, 2], c(zrate21, zrate22))
+      z1 <- z[, 1] - z1shift[1]
+      z2 <- z[, 2] - z2shift[1]
+      u1 <- ifelse(z1 > z1shift[2], 2, 1)
+      u1[z1 <= 0] = 0
+      u2 <- ifelse(z2 > z2shift[2], 2, 1)
+      u2[z2 <= 0] = 0
+      # didn't apply any transformation.
+      x1 <- u1
+      x2 <- u2
+      time_Kcor_org[i] <- median(microbenchmark(Kcor_org[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "original", nu = 0, tol = 1e-6)$R12, times = 5, unit = "us")$time)
+      time_Kcor_ml[i] <- median(microbenchmark(Kcor_ml[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "approx", nu = 0)$R12, times = 5, unit = "us")$time)
+      time_Kcor_mlbd[i] <- median(microbenchmark(Kcor_mlbd[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "approx", nu = 0, tol = 1e-6)$R12, times= 5, unit = "us")$time)
       }
-    }
+    MedianTime[trueR, zrate, ] <- c(median(time_Kcor_org), median(time_Kcor_ml), median(time_Kcor_mlbd))
+    AE <- abs(rbind(Kcor_org - latentRseq[trueR], Kcor_ml - latentRseq[trueR], Kcor_mlbd - latentRseq[trueR], Kcor_ml - Kcor_org, Kcor_mlbd - Kcor_org))
+    MeanAE[trueR, zrate, ] <- rowMeans(AE)
+    MaxAE[trueR, zrate, ] <- max.col(AE)
   }
 }
-save(df_comptime, df_accuracy, file = paste0("TwoSim_", typesh, "_rep10.rda"))
+save(MedianTime, MeanAE, MaxAE, file = "NN_eval.rda")
