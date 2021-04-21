@@ -6,7 +6,7 @@ nrep <- 100
 n <- 100
 # will test 19 latent r and 9 zero proportion values.
 latentRseq <- seq(-0.9, 0.9, by = 0.1)
-zratioseq <- c(0.1, 0.9, by = 0.1)
+zratioseq <- seq(0.1, 0.9, by = 0.1)
 ##### check BC
 type1 <- "binary"; type2 <- "continuous"
 # the computation results will be saved
@@ -34,9 +34,9 @@ for (trueR in 1:length(latentRseq)){
       time_Kcor_mlbd[i] <- median(microbenchmark(Kcor_mlbd[i] <- estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "approx", nu = 0, tol = 1e-6)$R12, times= 5, unit = "us")$time)
     }
     MedianTime[trueR, zrate, ] <- c(median(time_Kcor_org), median(time_Kcor_ml), median(time_Kcor_mlbd))
-    AE <- abs(rbind(Kcor_org - latentRseq[trueR], Kcor_ml - latentRseq[trueR], Kcor_mlbd - latentRseq[trueR], Kcor_ml - Kcor_org, Kcor_mlbd - Kcor_org))
-    MeanAE[trueR, zrate, ] <- rowMeans(AE)
-    MaxAE[trueR, zrate, ] <- max.col(AE)
+    AE <- abs(cbind(Kcor_org - latentRseq[trueR], Kcor_ml - latentRseq[trueR], Kcor_mlbd - latentRseq[trueR], Kcor_ml - Kcor_org, Kcor_mlbd - Kcor_org))
+    MeanAE[trueR, zrate, ] <- colMeans(AE)
+    MaxAE[trueR, zrate, ] <- apply(AE, 2, max)
   }
 }
 save(MedianTime, MeanAE, MaxAE, file = "BC_eval.rda")
