@@ -1,0 +1,11 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/758083/b23ffa7d81444037b30a4ee3bd1e63a8
+bundleId: https://api.rpubs.com/api/v1/document/758083/b23ffa7d81444037b30a4ee3bd1e63a8
+url: http://rpubs.com/mingzehuang/758083
+when: 1619716335.47427
+lastSyncTime: 1619716335.47427
