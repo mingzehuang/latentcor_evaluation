@@ -11,8 +11,8 @@ library(doFuture)
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
 # For NB Case
 # grid values that used to create precomputed values
-tau_grid <- seq(-1, 1, by = 0.1) # "by" increased from 0.005 to 0.01.
-d11_grid <- d12_grid <- d2_grid <- seq(0.1, 0.9, by = 0.1)
+tau_grid <- round(pnorm(seq(-3,3,by=.25)),5) * 2 - 1
+d11_grid <- d12_grid <- d2_grid <- round(pnorm(seq(-3,3,by=.5)),5)
 l_tau_grid <- length(tau_grid); l_d11_grid <- length(d11_grid)
 l_d12_grid <- length(d12_grid); l_d2_grid <- length(d2_grid)
 NBvalue <- array(NA, c(l_tau_grid, l_d11_grid, l_d12_grid, l_d2_grid))
