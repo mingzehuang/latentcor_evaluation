@@ -6,9 +6,8 @@ library(fMultivar)
 library(mnormt)
 library(irlba)
 library(chebpol)
-library(doParallel)
 library(foreach)
-
+library(doFuture)
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
 
 # For TB Case
@@ -17,27 +16,20 @@ tau_grid <- seq(-1, 1, by = 0.1)
 d1_grid <- d2_grid <- seq(0.1, 0.9, by = 0.1)
 l_tau_grid <- length(tau_grid); l_d1_grid <- length(d1_grid); l_d2_grid <- length(d2_grid)
 TBvalue <- array(NA, c(l_tau_grid, l_d1_grid, l_d2_grid))
-cl <- makeForkCluster(detectCores(logical=T))
-registerDoParallel(cl)
+
+registerDoFuture()
+plan(multicore, workers = 80)
 value_list <-
   foreach (i = 1:l_tau_grid) %:%
     foreach (j = 1:l_d1_grid, .combine = rbind) %dopar% {
       value = rep(NA, l_d2_grid)
       for (k in 1:l_d2_grid) {
-        zratio1 = d1_grid[j]; zratio2 = d2_grid[k]
-        f1 <- function(r)(bridgeF_tb(r, zratio1 = zratio1, zratio2 = zratio2)
-                          - tau_grid[i] * bound_tb(zratio1 = zratio1, zratio2 = zratio2))^2
-        op <- tryCatch(optimize(f1, lower = -0.999, upper = 0.999, tol = 1e-3)[1], error = function(e) 100)
-        if(op == 100) {
-          warning("Optimize returned error one of the pairwise correlations, returning NA")
-          value[k] <- NA
-        } else {
-          value[k] <- unlist(op)
-        }
+        zratio1 = matrix(d1_grid[j], nrow = 1); zratio2 = matrix(d2_grid[k], nrow = 1)
+        tau = tau_grid[i] * bound_tb(zratio1 = zratio1, zratio2 = zratio2)
+        value[k] = r_sol(type1 = "trunc", type2 = "binary", tau = tau, zratio1 = zratio1, zratio2 = zratio2, tol = 1e-6)
       }
       value_list <- value
     }
-stopCluster(cl)
 
 for (i in 1:l_tau_grid) {
       TBvalue[i, , ] = matrix(as.integer(10^7 * value_list[[i]]), l_d1_grid, l_d2_grid)

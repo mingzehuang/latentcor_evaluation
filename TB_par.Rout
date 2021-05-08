@@ -1,9 +1,7 @@
 Loading required package: timeDate
 Loading required package: timeSeries
 Loading required package: fBasics
-Loading required package: foreach
-Loading required package: iterators
-Loading required package: parallel
+Loading required package: future
 > proc.time()
    user  system elapsed 
-  8.539   6.796   3.057 
+  9.261   6.181   6.398 

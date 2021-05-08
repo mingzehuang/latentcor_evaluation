@@ -1,10 +1,10 @@
 library(MASS)
 library(microbenchmark)
 library(foreach)
-library(doParallel)
 library(Matrix)
 library(chebpol)
 library(pcaPP)
+library(doFuture)
 
 load("/scratch/user/sharkmanhmz/latentcor_evaluation_git/latentcor_evaluation/TB_grid.rda")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
@@ -23,8 +23,9 @@ zratioseq <- seq(0.1, 0.9, by = 0.1)
 ##### check TB
 type1 <- "trunc"; type2 <- "binary"
 # the computation results will be saved in data.frame format
-cl <- makePSOCKcluster(detectCores())
-registerDoParallel(cl)
+registerDoFuture()
+plan(multicore, workers = 80)
+
 TB_eval <-
 foreach (trueR = 1:length(latentRseq)) %:%
   foreach (zrate = 1:length(zratioseq), .combine = rbind) %dopar% {
@@ -51,7 +52,7 @@ foreach (trueR = 1:length(latentRseq)) %:%
     AE <- abs(cbind(Kcor_org - latentRseq[trueR], Kcor_ml - latentRseq[trueR], Kcor_mlbd - latentRseq[trueR], Kcor_ml - Kcor_org, Kcor_mlbd - Kcor_org))
     TB_eval <- c(median(time_org), median(time_ml), median(time_mlbd), colMeans(AE), apply(AE, 2, max))
   }
-stopCluster(cl)
+
 TB_eval_3d <- array(NA, c(length(latentRseq), length(zratioseq), 13))
 for (j in 1:length(latentRseq)) {
   TB_eval_3d[j, , ] = TB_eval[[j]]

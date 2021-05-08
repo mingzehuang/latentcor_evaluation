@@ -4,12 +4,12 @@
 #SBATCH --get-user-env=L             #Replicate login environment
 #SBATCH --partition=bigmem
 ##NECESSARY JOB SPECIFICATIONS
-#SBATCH --job-name=all_par            #Set the job name to
+#SBATCH --job-name=all_num_eval            #Set the job name to
 #SBATCH --time=01:00:00               #Set the wall clock limit to 6hr and 30min
 #SBATCH --nodes=2                    #Request 1 node
 #SBATCH --ntasks-per-node=80         #Request 8 tasks/cores per node
 #SBATCH --mem=320GB                     #Request 8GB per node
-#SBATCH --output=all_Out.%j            #Send stdout/err to "Example2Out.[jobID]"
+#SBATCH --output=all_num_eval_Out.%j            #Send stdout/err to "Example2Out.[jobID]"
 
 ##OPTIONAL JOB SPECIFICATIONS
 #SBATCH --mail-type=ALL                     #Send email on all job events
@@ -17,13 +17,13 @@
 
 #First Executable Line
 module load GCC/9.3.0  OpenMPI/4.0.3 R/4.0.0
-R CMD BATCH --no-save --no-restore --slave BC_par.R &
-R CMD BATCH --no-save --no-restore --slave BB_par.R &
-R CMD BATCH --no-save --no-restore --slave TC_par.R &
-R CMD BATCH --no-save --no-restore --slave TB_par.R &
-R CMD BATCH --no-save --no-restore --slave TT_par.R &
-R CMD BATCH --no-save --no-restore --slave NC_par.R &
-R CMD BATCH --no-save --no-restore --slave NB_par.R &
-R CMD BATCH --no-save --no-restore --slave NN_par.R &
-wait
-R CMD BATCH --no-save --no-restore --slave all_par.R
+R CMD BATCH --no-save --no-restore --slave num_eval_bc_par.R &
+R CMD BATCH --no-save --no-restore --slave num_eval_bb_par.R &
+R CMD BATCH --no-save --no-restore --slave num_eval_tc_par.R &
+R CMD BATCH --no-save --no-restore --slave num_eval_tb_par.R &
+R CMD BATCH --no-save --no-restore --slave num_eval_tt_par.R &
+R CMD BATCH --no-save --no-restore --slave num_eval_nc_par.R &
+R CMD BATCH --no-save --no-restore --slave num_eval_nb_par.R &
+R CMD BATCH --no-save --no-restore --slave num_eval_nn_par.R &
+
+

@@ -1,17 +1,16 @@
 library(MASS)
 library(microbenchmark)
 library(foreach)
-library(doParallel)
 library(Matrix)
 library(chebpol)
 library(pcaPP)
+library(doFuture)
 
 load("/scratch/user/sharkmanhmz/latentcor_evaluation_git/latentcor_evaluation/BC_grid.rda")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/KendallTau.R")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/fromKtoR.R")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/estimateR.R")
-
 
 # setup for 100 replication.
 nrep <- 100
@@ -23,8 +22,10 @@ zratioseq <- seq(0.1, 0.9, by = 0.1)
 ##### check BC
 type1 <- "binary"; type2 <- "continuous"
 # the computation results will be saved
-cl <- makePSOCKcluster(detectCores())
-registerDoParallel(cl)
+
+registerDoFuture()
+plan(multicore, workers = 80)
+
 BC_eval <-
   foreach (trueR = 1:length(latentRseq)) %:%
   foreach (zrate = 1:length(zratioseq), .combine = rbind) %dopar% {
@@ -50,7 +51,7 @@ BC_eval <-
     AE <- abs(cbind(Kcor_org - latentRseq[trueR], Kcor_ml - latentRseq[trueR], Kcor_mlbd - latentRseq[trueR], Kcor_ml - Kcor_org, Kcor_mlbd - Kcor_org))
     BC_eval <- c(median(time_org), median(time_ml), median(time_mlbd), colMeans(AE), apply(AE, 2, max))
   }
-stopCluster(cl)
+
 BC_eval_3d <- array(NA, c(length(latentRseq), length(zratioseq), 13))
 for (j in 1:length(latentRseq)) {
   BC_eval_3d[j, , ] = BC_eval[[j]]
