@@ -27,3 +27,5 @@ R CMD BATCH --no-save --no-restore --slave NB_par.R &
 R CMD BATCH --no-save --no-restore --slave NN_par.R &
 wait
 R CMD BATCH --no-save --no-restore --slave all_par.R
+wait
+rm BC_grid.rda BB_grid.rda TC_grid.rda TB_grid.rda TT_grid.rda NC_grid.rda NB_grid.rda NN_grid.rda

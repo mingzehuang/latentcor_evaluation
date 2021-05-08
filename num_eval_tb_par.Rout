@@ -1,5 +1,7 @@
 Loading required package: future
-There were 50 or more warnings (use warnings() to see the first 50)
-> proc.time()
-     user    system   elapsed 
-12337.613  2919.870  1600.716 
+Error in readChar(con, 5L, useBytes = TRUE) : cannot open the connection
+Calls: load -> readChar
+In addition: Warning message:
+In readChar(con, 5L, useBytes = TRUE) :
+  cannot open compressed file '/scratch/user/sharkmanhmz/latentcor_evaluation_git/latentcor_evaluation/TB_grid.rda', probable reason 'No such file or directory'
+Execution halted
