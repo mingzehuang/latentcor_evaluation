@@ -57,4 +57,4 @@ TT_eval_3d <- array(NA, c(length(latentRseq), length(zratioseq), 13))
 for (j in 1:length(latentRseq)) {
   TT_eval_3d[j, , ] = TT_eval[[j]]
 }
-save(TT_eval_3d, file = "TT_eval.rda")
+save(TT_eval_3d, file = "TT_eval.rda", compress = "xz")

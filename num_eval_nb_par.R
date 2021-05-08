@@ -59,4 +59,4 @@ NB_eval_3d <- array(NA, c(length(latentRseq), length(zratioseq), 13))
 for (j in 1:length(latentRseq)) {
   NB_eval_3d[j, , ] = NB_eval[[j]]
 }
-save(NB_eval_3d, file = "NB_eval.rda")
+save(NB_eval_3d, file = "NB_eval.rda", compress = "xz")

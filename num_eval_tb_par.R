@@ -57,4 +57,4 @@ TB_eval_3d <- array(NA, c(length(latentRseq), length(zratioseq), 13))
 for (j in 1:length(latentRseq)) {
   TB_eval_3d[j, , ] = TB_eval[[j]]
 }
-save(TB_eval_3d, file = "TB_eval.rda")
+save(TB_eval_3d, file = "TB_eval.rda", compress = "xz")

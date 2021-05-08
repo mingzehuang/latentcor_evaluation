@@ -56,4 +56,4 @@ BC_eval_3d <- array(NA, c(length(latentRseq), length(zratioseq), 13))
 for (j in 1:length(latentRseq)) {
   BC_eval_3d[j, , ] = BC_eval[[j]]
 }
-save(BC_eval_3d, file = "BC_eval.rda")
+save(BC_eval_3d, file = "BC_eval.rda", compress = "xz")

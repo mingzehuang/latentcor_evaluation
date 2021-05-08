@@ -25,5 +25,7 @@ R CMD BATCH --no-save --no-restore --slave num_eval_tt_par.R &
 R CMD BATCH --no-save --no-restore --slave num_eval_nc_par.R &
 R CMD BATCH --no-save --no-restore --slave num_eval_nb_par.R &
 R CMD BATCH --no-save --no-restore --slave num_eval_nn_par.R &
+wait
+R CMD BATCH --no-save --no-restore --slave all_num_eval.R
 
 
