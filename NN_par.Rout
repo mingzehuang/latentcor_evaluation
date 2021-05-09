@@ -3,5 +3,5 @@ Loading required package: timeSeries
 Loading required package: fBasics
 Loading required package: future
 > proc.time()
-    user   system  elapsed 
-4666.293   95.198  106.545 
+     user    system   elapsed 
+33761.304   213.459   635.379 
