@@ -12,8 +12,8 @@ source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
 
 #for NN Case
 # grid values that used to create precomputed values
-tau_grid <- round(pnorm(seq(-2.1, 2.1, by = .15), sd = .8), 6) * 2 - 1
-d11_grid <- d12_grid <- d21_grid <- d22_grid <- round(pnorm(seq(-2.1, 2.1, by =.3), sd = .8), 6)
+tau_grid <- round(pnorm(seq(-2.1, 2.1, by = .15)), 6) * 2 - 1
+d11_grid <- d12_grid <- d21_grid <- d22_grid <- round(pnorm(seq(-2.1, 2.1, by =.3)), 6)
 l_tau_grid <- length(tau_grid); l_d11_grid <- length(d11_grid); l_d12_grid <- length(d12_grid)
 l_d21_grid <- length(d21_grid); l_d22_grid <- length(d22_grid)
 NNvalue <- array(NA, c(l_tau_grid, l_d11_grid, l_d12_grid, l_d21_grid, l_d22_grid))
