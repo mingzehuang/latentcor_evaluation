@@ -4,4 +4,4 @@ Loading required package: fBasics
 Loading required package: future
 > proc.time()
    user  system elapsed 
- 37.774   7.789   7.971 
+ 37.052   8.149  18.372 
