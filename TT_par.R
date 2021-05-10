@@ -12,8 +12,8 @@ source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
 
 # For TT Case
 # grid values that used to create precomputed values
-tau_grid <- round(pnorm(seq(-2.1, 2.1, by = .15)), 6) * 2 - 1
-d1_grid <- d2_grid <- round(pnorm(seq(.15, 2.1, by = .15)), 6) * 2 - 1
+tau_grid <- round(pnorm(seq(-1.8, 1.8, by =.15), sd = .8), 6) * 2 - 1
+d1_grid <- d2_grid <- round(pnorm(seq(.15, 1.8, by =.15), sd = .8), 6) * 2 - 1
 l_tau_grid <- length(tau_grid); l_d1_grid <- length(d1_grid); l_d2_grid <- length(d2_grid)
 TTvalue <- array(NA, c(l_tau_grid, l_d1_grid, l_d2_grid))
 
