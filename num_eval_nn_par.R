@@ -34,7 +34,6 @@ NN_eval <-
       zrate22 <- zrate2 / 2
       # initialize for every combination
       time_org <- time_ml <- time_mlbd <- Kcor_org <- Kcor_ml <- Kcor_mlbd <- AE <- rep(NA, nrep)
-      set.seed(123)
       for(i in 1:nrep){
         # generate bivariate normal
         z <- MASS::mvrnorm(n, mu = c(0, 0), Sigma = matrix(c(1, latentRseq[trueR], latentRseq[trueR], 1), nrow=2))
