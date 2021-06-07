@@ -11,10 +11,10 @@ obj = c("time_org", "time_ml", "time_approx",
         "MeanAE_org", "MeanAE_ml", "MeanAE_mlbd", "MeanAE_ml_org", "MeanAE_mlbd_org",
         "MaxAE_org", "MaxAE_ml", "MaxAE_mlbd", "MaxAE_ml_org", "MaxAE_mlbd_org")
 for (i in 1:length(obj)) {
-  for (type in c("BC", "BB", "TC", "TB", "TT", "NC", "NB", "NN")) {
+  for (type in c("BC", "BB", "TC", "TB", "TT", "NC", "NB", "NT", "NN")) {
     data <- data.frame(get(paste(type, "eval_3d", sep = "_"))[ , , i])
     rownames(data) <- as.character(seq(-0.9, 0.9, by = 0.1))
-    if (type == "NC" | type == "NB") {
+    if (type == "NC" | type == "NB" | type == "NT") {
       colnames(data) <- as.character(seq(0.1, 0.8, by = 0.1))
     } else if (type == "NN") {
       colnames(data) <- as.character(seq(0.2, 0.8, by = 0.1))
