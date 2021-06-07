@@ -16,7 +16,7 @@
 #SBATCH --mail-user=sharkmanhmz@tamu.edu    #Send all emails
 
 #First Executable Line
-module load GCC/9.3.0  OpenMPI/4.0.3 R/4.0.0
+module load GCC/10.2.0 OpenMPI/4.0.5 R/4.0.3
 R CMD BATCH --no-save --no-restore --slave num_eval_bc_par.R &
 R CMD BATCH --no-save --no-restore --slave num_eval_bb_par.R &
 R CMD BATCH --no-save --no-restore --slave num_eval_tc_par.R &

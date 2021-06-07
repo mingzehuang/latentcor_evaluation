@@ -16,7 +16,7 @@
 #SBATCH --mail-user=sharkmanhmz@tamu.edu    #Send all emails
 
 #First Executable Line
-module load GCC/9.3.0  OpenMPI/4.0.3 R/4.0.0
+module load GCC/10.2.0 OpenMPI/4.0.5 R/4.0.3
 R CMD BATCH --no-save --no-restore --slave BC_par.R &
 R CMD BATCH --no-save --no-restore --slave BB_par.R &
 R CMD BATCH --no-save --no-restore --slave TC_par.R &
@@ -27,6 +27,21 @@ R CMD BATCH --no-save --no-restore --slave NB_par.R &
 R CMD BATCH --no-save --no-restore --slave NT_par.R &
 R CMD BATCH --no-save --no-restore --slave NN_par.R &
 wait
+echo "BC_grid_mixedCCA.rda size is $(find "BC_grid_mixedCCA.rda" -printf "%s") Bytes."
+echo "BC_grid.rda size is $(find "BC_grid.rda" -printf "%s") Bytes."
+echo "BB_grid_mixedCCA.rda size is $(find "BB_grid_mixedCCA.rda" -printf "%s") Bytes."
+echo "BB_grid.rda size is $(find "BB_grid.rda" -printf "%s") Bytes."
+echo "TC_grid_mixedCCA.rda size is $(find "TC_grid_mixedCCA.rda" -printf "%s") Bytes."
+echo "TC_grid.rda size is $(find "TC_grid.rda" -printf "%s") Bytes."
+echo "TB_grid_mixedCCA.rda size is $(find "TB_grid_mixedCCA.rda" -printf "%s") Bytes."
+echo "TB_grid.rda size is $(find "TB_grid.rda" -printf "%s") Bytes."
+echo "TT_grid_mixedCCA.rda size is $(find "TT_grid_mixedCCA.rda" -printf "%s") Bytes."
+echo "TT_grid.rda size is $(find "TT_grid.rda" -printf "%s") Bytes."
+echo "NC_grid.rda size is $(find "NC_grid.rda" -printf "%s") Bytes."
+echo "NB_grid.rda size is $(find "NB_grid.rda" -printf "%s") Bytes."
+echo "NT_grid.rda size is $(find "NT_grid.rda" -printf "%s") Bytes."
+echo "NN_grid.rda size is $(find "NN_grid.rda" -printf "%s") Bytes."
 R CMD BATCH --no-save --no-restore --slave all_par.R
 wait
-rm BC_grid.rda BB_grid.rda TC_grid.rda TB_grid.rda TT_grid.rda NC_grid.rda NB_grid.rda NT_grid.rda NN_grid.rda
+echo "all_grid.rda size is $(find "all_grid.rda" -printf "%s") Bytes."
+rm BC_grid_mixedCCA.rda BC_grid.rda BB_grid_mixedCCA.rda BB_grid.rda TC_grid_mixedCCA.rda TC_grid.rda TB_grid_mixedCCA.rda TB_grid.rda TT_grid_mixedCCA.rda TT_grid.rda NC_grid.rda NB_grid.rda NT_grid.rda NN_grid.rda

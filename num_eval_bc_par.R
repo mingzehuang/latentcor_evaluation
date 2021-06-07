@@ -4,6 +4,7 @@ library(foreach)
 library(Matrix)
 library(chebpol)
 library(pcaPP)
+library(doRNG)
 library(doFuture)
 
 load("/scratch/user/sharkmanhmz/latentcor_evaluation_git/latentcor_evaluation/all_grid.rda")

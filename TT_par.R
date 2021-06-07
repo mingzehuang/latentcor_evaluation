@@ -11,34 +11,44 @@ library(doFuture)
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
 
 # For TT Case
+TTvalue = function (tau_grid, d1_grid, d2_grid) {
+  l_tau_grid = length(tau_grid); l_d1_grid = length(d1_grid); l_d2_grid = length(d2_grid)
+  TTvalue = array(NA, c(l_tau_grid, l_d1_grid, l_d2_grid))
+  registerDoFuture()
+  plan(multicore, workers = 80)
+  value_list <-
+    foreach (i = 1:l_tau_grid) %:%
+      foreach (j = 1:l_d1_grid, .combine = rbind) %dopar% {
+        value = rep(NA, l_d2_grid)
+        for (k in 1:l_d2_grid) {
+          zratio1 = matrix(d1_grid[j], nrow = 1); zratio2 = matrix(d2_grid[k], nrow = 1)
+          tau = tau_grid[i] * bound_tt(zratio1 = zratio1, zratio2 = zratio2)
+          value[k] = r_sol(type1 = "trunc", type2 = "trunc", tau = tau, zratio1 = zratio1, zratio2 = zratio2, tol = 1e-6)
+        }
+        value_list <- value
+      }
+  for (i in 1:l_tau_grid) {
+    TTvalue[i, , ] = matrix(as.integer(10^7 * value_list[[i]]), l_d1_grid, l_d2_grid)
+  }
+  return (TTvalue)
+}
+
+# grid values that used to create precomputed values.
+d1 <- d2 <- log10(seq(1, 10^0.99, length = 50))
+tau <- seq(-0.99, 0.99, by = 0.01) # "by" increased from 0.005 to 0.01.
+
+# create grid input for ipol
+TTipolgrid <- list(tau, d1, d2)
+# interpolation.
+TTipol <- chebpol::ipol(TTvalue(tau_grid = tau, d1_grid = d1, d2_grid = d2), grid = TTipolgrid, method = "multilin")
+save(TTipol, file = "TT_grid_mixedCCA.rda", compress = "xz")
+
 # grid values that used to create precomputed values
 tau_grid <- round(pnorm(seq(-1.8, 1.8, by =.15), sd = .8), 6) * 2 - 1
 d1_grid <- d2_grid <- round(pnorm(seq(.12, 1.2, by =.06), sd = .5), 6) * 2 - 1
-l_tau_grid <- length(tau_grid); l_d1_grid <- length(d1_grid); l_d2_grid <- length(d2_grid)
-TTvalue <- array(NA, c(l_tau_grid, l_d1_grid, l_d2_grid))
-
-registerDoFuture()
-plan(multicore, workers = 80)
-value_list <-
-  foreach (i = 1:l_tau_grid) %:%
-    foreach (j = 1:l_d1_grid, .combine = rbind) %dopar% {
-      value = rep(NA, l_d2_grid)
-      for (k in 1:l_d2_grid) {
-        zratio1 = matrix(d1_grid[j], nrow = 1); zratio2 = matrix(d2_grid[k], nrow = 1)
-        tau = tau_grid[i] * bound_tt(zratio1 = zratio1, zratio2 = zratio2)
-        value[k] = r_sol(type1 = "trunc", type2 = "trunc", tau = tau, zratio1 = zratio1, zratio2 = zratio2, tol = 1e-6)
-      }
-      value_list <- value
-    }
-
-for (i in 1:l_tau_grid) {
-      TTvalue[i, , ] = matrix(as.integer(10^7 * value_list[[i]]), l_d1_grid, l_d2_grid)
-}
 
 # create grid input for ipol
 TTipolgrid <- list(tau_grid, d1_grid, d2_grid)
 # interpolation.
-TTipol <- chebpol::ipol(TTvalue, grid = TTipolgrid, method = "multilin")
+TTipol <- chebpol::ipol(TTvalue(tau_grid = tau_grid, d1_grid = d1_grid, d2_grid = d2_grid), grid = TTipolgrid, method = "multilin")
 save(TTipol, file = "TT_grid.rda", compress = "xz")
-
-

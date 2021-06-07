@@ -1,0 +1,7 @@
+Loading required package: timeDate
+Loading required package: timeSeries
+Loading required package: fBasics
+Loading required package: future
+> proc.time()
+   user  system elapsed 
+881.587  41.770  96.679 
