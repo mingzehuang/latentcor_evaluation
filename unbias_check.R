@@ -4,7 +4,7 @@ library(latentcor)
 rhorep = rep(NA, 100); Rrep = matrix(NA, 100, 3)
 for (rep in 1:100) {
   rho = runif(1, -1, 1)
-  X = GenData(n = 1000, types = c("ter", "con"), rhos = rho, XP = list(c(.3, .5), NA))
+  X = GenData(n = 1000, types = c("ter", "con"), rhos = rho, XP = list(c(.3, .5), NA))$X
   R_nc_org = estR(X, types = c("ter", "con"), method = "original")$R
   R_nc_approx = estR(X, types = c("ter", "con"), method = "approx")$R
   rhorep[rep] = rho; Rrep[rep, 1] = R_nc_org[2, 1]; Rrep[rep, 2] = R_nc_approx[2, 1]; Rrep[rep, 3] = cor(X)[2, 1]
