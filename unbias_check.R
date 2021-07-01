@@ -33,13 +33,46 @@ cp1 = "cube"; cp2 = "cube"
 for (tp1 in c("con", "bin", "ter", "tru")) {
   for (tp2 in c("con", "bin", "ter", "tru")) {
     for (md in c("original", "approx")) {
-      rhorep = rep(NA, 100); Rrep = matrix(NA, 100, 3)
+      rhorep = rep(NA, 100); Rrep = matrix(NA, 100, 4)
       for (rep in 1:100) {
       rho = runif(1, -1, 1)
       X = GenData(n = 1000, rhos = rho, types = c(tp1, tp2), copulas = c(cp1, cp2))$X
       R_org = estR(X, types = c(tp1, tp2), method = "original")$R
-      R_approx = estR(X, types = c(tp1, tp2), method = "approx")$R      
-      rhorep[rep] = rho; Rrep[rep, 1] = R_org[2, 1]; Rrep[rep, 2] = R_approx[2, 1]; Rrep[rep, 3] = cor(X)[2, 1]
+      R_approx = estR(X, types = c(tp1, tp2), method = "approx")$R
+      R_conapprox = estR(X, types = c(ifelse(tp1 == "ter", "con", tp1), ifelse(tp2 == "ter", "con", tp2)), method = "original")$R
+      rhorep[rep] = rho; Rrep[rep, 1] = R_org[2, 1]; Rrep[rep, 2] = R_approx[2, 1]; Rrep[rep, 3] = cor(X)[2, 1]; Rrep[rep, 4] = R_conapprox[2, 1]
+      }
+      assign(paste("R", cp1, cp2, tp1, tp2, "org", sep = "_"), Rrep[ , 1])
+      assign(paste("R", cp1, cp2, tp1, tp2, "approx", sep = "_"), Rrep[ , 2])
+      assign(paste("R", cp1, cp2, tp1, tp2, "pearson", sep = "_"), Rrep[ , 3])
+      assign(paste("R", cp1, cp2, tp1, tp2, "conapprox", sep = "_"), Rrep[ , 4])
+      PlotPair(datapair = cbind(rhorep, c(get(paste("R", cp1, cp2, tp1, tp2, "org", sep = "_")))),
+               namepair = c("rho", paste("R", cp1, cp2, tp1, tp2, "org", sep = "_")),
+               title = paste(tp1, "vs.", tp2, "(org)", sep = " "))
+      PlotPair(datapair = cbind(rhorep, c(get(paste("R", cp1, cp2, tp1, tp2, "approx", sep = "_")))),
+               namepair = c("rho", paste("R", cp1, cp2, tp1, tp2, "approx", sep = "_")),
+               title = paste(tp1, "vs.", tp2, "(approx)", sep = " "))
+      PlotPair(datapair = cbind(rhorep, c(get(paste("R", cp1, cp2, tp1, tp2, "pearson", sep = "_")))),
+               namepair = c("rho", paste("R", cp1, cp2, tp1, tp2, "pearson", sep = "_")),
+               title = paste(tp1, "vs.", tp2, "(pearson)", sep = " "))
+      PlotPair(datapair = cbind(rhorep, c(get(paste("R", cp1, cp2, tp1, tp2, "conapprox", sep = "_")))),
+               namepair = c("rho", paste("R", cp1, cp2, tp1, tp2, "pearson", sep = "_")),
+               title = paste(tp1, "vs.", tp2, "(conapprox)", sep = " "))
+    }
+  }
+}
+
+cp1 = "cube"; cp2 = "cube"
+for (tp1 in c("con")) {
+  for (tp2 in c("con", "bin", "tru", "ter", "qua", "qui", "sen", "sep", "oct")) {
+    for (md in c("original")) {
+      rhorep = rep(NA, 100); Rrep = matrix(NA, 100, 3)
+      for (rep in 1:100) {
+        rho = runif(1, -1, 1)
+        X = GenData(n = 1000, rhos = rho, types = c(tp1, tp2), copulas = c(cp1, cp2))$X
+        R_org = estR(X, types = c(tp1, tp2), method = "original")$R
+        R_approx = estR(X, types = c(tp1, tp2), method = "approx")$R
+        rhorep[rep] = rho; Rrep[rep, 1] = R_org[2, 1]; Rrep[rep, 2] = R_approx[2, 1]; Rrep[rep, 3] = cor(X)[2, 1]
       }
       assign(paste("R", cp1, cp2, tp1, tp2, "org", sep = "_"), Rrep[ , 1])
       assign(paste("R", cp1, cp2, tp1, tp2, "approx", sep = "_"), Rrep[ , 2])
