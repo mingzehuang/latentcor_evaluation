@@ -8,7 +8,7 @@ library(irlba)
 library(chebpol)
 library(foreach)
 library(doFuture)
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/internal.R")
 
 #for NN Case
 NNvalue = function (tau_grid, d11_grid, d12_grid, d21_grid, d22_grid) {
@@ -24,10 +24,10 @@ NNvalue = function (tau_grid, d11_grid, d12_grid, d21_grid, d22_grid) {
         for (k in 1:l_d12_grid) {
           for (l in 1:l_d21_grid) {
             for (m in 1:l_d22_grid) {
-              zratio1 = matrix(c(d11_grid[j] * d12_grid[k], d12_grid[k]), nrow = 1)
-              zratio2 = matrix(c(d21_grid[l] * d22_grid[m], d22_grid[m]), nrow = 1)
-              tau = tau_grid[i] * bound_nn(zratio1 = zratio1, zratio2 = zratio2)
-              value[k, l, m] = r_sol(type1 = "ternary", type2 = "ternary", tau = tau, zratio1 = zratio1, zratio2 = zratio2, tol = 1e-6)
+              zratio1 = c(d11_grid[j] * d12_grid[k], d12_grid[k])
+              zratio2 = c(d21_grid[l] * d22_grid[m], d22_grid[m])
+              tau = tau_grid[i] * bound_switch(comb = "33", zratio1 = zratio1, zratio2 = zratio2)
+              value[k, l, m] = r_sol(K = tau, zratio1 = zratio1, zratio2 = zratio2, comb = "33", tol = 1e-8, ratio = 0)
             }
           }
         }

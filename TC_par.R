@@ -8,7 +8,7 @@ library(irlba)
 library(chebpol)
 library(foreach)
 library(doFuture)
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/internal.R")
 
 #For TC Case
 TCvalue = function (tau_grid, d1_grid) {
@@ -18,9 +18,9 @@ TCvalue = function (tau_grid, d1_grid) {
   value_list <-
     foreach (i = 1:l_tau_grid, .combine = rbind) %:%
       foreach (j = 1:l_d1_grid, .combine = c) %dopar% {
-        zratio1 = matrix(d1_grid[j], nrow = 1)
-        tau = tau_grid[i] * bound_tc(zratio1 = zratio1)
-        value_list = r_sol(type1 = "trunc", type2 = "continuous", tau = tau, zratio1 = zratio1, zratio2 = NULL, tol = 1e-6)
+        zratio1 = d1_grid[j]; zratio2 = NULL
+        tau = tau_grid[i] * bound_switch(comb = "20", zratio1 = zratio1, zratio2 = zratio2)
+        value_list = r_sol(K = tau, zratio1 = zratio1, zratio2 = zratio2, comb = "20", tol = 1e-8, ratio = 0)
       }
   return (matrix(as.integer(10^7 * value_list), l_tau_grid, l_d1_grid))
 }

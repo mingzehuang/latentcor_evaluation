@@ -8,7 +8,7 @@ library(irlba)
 library(chebpol)
 library(foreach)
 library(doFuture)
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/internal.R")
 
 # For NC Case
 NCvalue = function (tau_grid, d11_grid, d12_grid) {
@@ -21,9 +21,9 @@ NCvalue = function (tau_grid, d11_grid, d12_grid) {
       foreach (j = 1:l_d11_grid, .combine = rbind) %dopar% {
         value <- rep(NA, l_d12_grid)
         for (k in 1:l_d12_grid) {
-          zratio1 = matrix(c(d11_grid[j] * d12_grid[k], d12_grid[k]), nrow = 1)
-          tau = tau_grid[i] * bound_nc(zratio1 = zratio1)
-          value[k] = r_sol(type1 = "ternary", type2 = "continuous", tau = tau, zratio1 = zratio1, zratio2 = NULL, tol = 1e-6)
+          zratio1 = c(d11_grid[j] * d12_grid[k], d12_grid[k]); zratio2 = NULL
+          tau = tau_grid[i] * bound_switch(comb = "30", zratio1 = zratio1, zratio2 = zratio2)
+          value[k] = r_sol(K = tau, zratio1 = zratio1, zratio2 = zratio2, comb = "30", tol = 1e-8, ratio = 0)
         }
         value_list <- value
       }
