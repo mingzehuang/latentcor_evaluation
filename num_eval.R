@@ -8,35 +8,74 @@ library(doRNG)
 library(doFuture)
 
 load("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/sysdata.rda")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/KendallTau.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/fromKtoR.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/estR.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/fromZtoX.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/internal.R")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/GenData.R")
-# setup for 100 replication.
-nrep = 100
-# sample size
-n = 100
-##### check BC
-type1 = "binary"; type2 = "continuous"
-# will test 19 latent r and 9 zero proportion values.
-latentRseq = seq(-0.9, 0.9, by = 0.1)
-zratioseq = seq(0.1, 0.9, by = 0.1)
-types = c("continuous", "binary", "trunc", "ternary")
-methods = c("original", "ml", "approx")
-indseq = expand.grid(nrep, latentRseq, zratioseq, types, types, methods)
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/estR.R")
+
+nrep = 1:100
+types_comb = expand.grid(c("ter", "tru", "bin", "con"), c("ter", "tru", "bin", "con"))[upper.tri(matrix(1:16, 4, 4), diag = TRUE), ]
+types_list = list()
+for (i in 1:(nrow(types_comb) - 1)) {
+  types_list[[i]] = types_comb[i, ]
+}
+latentRseq = seq(-0.9, 0.9, by = 0.1); zratioseq = seq(0.1, 0.9, by = 0.1); ratios = c(0, 0.5, 0.9, 0.99, 1)
+indseq = expand.grid(nrep, types_list, latentRseq, zratioseq, ratios)
 registerDoFuture()
 plan(multicore, workers = 80)
 value =
-foreach (ind = 1:nrow(indseq)) {
-  simdata = GenData(n = n, type1 = type1, type2 = type2, rho = latentRseq[trueR], q1 = zratioseq[zrate])
-  X1 = simdata$X1; X2 = simdata$X2
-  time = median(microbenchmark::microbenchmark(estimate = estR(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = methods[m])$R12, times = 5)$time) / 10^6
-  value = c(time, estimate)
+  foreach (ind = 1:nrow(indseq), .combine = c) %dopar% {
+    types = unlist(indseq[ind, 2])
+    if (types[1] == "ter"  & types[2] == "ter") {
+      XP = list(c(indseq[ind, 4] / 2, indseq[ind, 4]), c(indseq[ind, 4] / 2, indseq[ind, 4]))
+    } else if (types[1] == "ter" & (types[2] == "tru" | types[2] == "bin")) {
+      XP = list(c(indseq[ind, 4] / 2, indseq[ind, 4]), 0.5)
+    } else if (types[1] == "ter" & types[2] == "con") {
+      XP = list(c(indseq[ind, 4] / 2, indseq[ind, 4]), NA)
+    } else if ((types[1] == "tru" | types[1] == "bin") & (types[2] == "tru" | types[2] == "bin")) {
+      XP = list(indseq[ind, 4], 0.5)
+    } else if ((types[1] == "tru" | types[1] == "bin") & type[2] == "con") {
+      XP = list(indseq[ind, 4], NA)
+    }
+    simdata = GenData(types = types, rhos = indseq[ind, 3], XP = XP)
+    X = simdata$X
+    time = median(microbenchmark::microbenchmark(estimate = estR(X = simdata$X, types = unlist(indseq[ind, 2]), ratio = indseq[ind, 5])$R[1, 2], times = 5)$time) / 10^6
+    value = c(time, estimate)
+  }
+time_mat = array(value[ , 1], c(length(nrep), length(types_list), length(latentRseq), length(zratioseq), length(ratios)))
+estimate_mat = array(value[ , 2], c(length(nrep), length(types_list), length(latentRseq), length(zratioseq), length(ratios)))
+
+median_time = array(NA, c(length(types_list), length(latentRseq), length(zratioseq), length(ratios)))
+for (j in 1:length(types_list)) {
+  for (k in 1:length(latentRseq)) {
+    for (l in 1:length(zratioseq)) {
+      for (m in 1:length(ratios)) {
+        median_time[j, k, l, m] = median(time_mat[ , j, k, l, m])
+      }
+    }
+  }
 }
-out = array(NA, c(length(latentRseq), length(zratioseq), length(methods), (length(methods)) ^ 3 * (length(methods) - 1) ^ 2))
-for (j in 1:nrow(indseq)) {
-  out[indseq[j, 1], indseq[j, 2], indseq[j, 3], ] = value[j]
+
+meanAE = array(NA, c(length(types_list), length(latentRseq), length(zratioseq), length(ratios)))
+for (j in 1:length(types_list)) {
+  for (k in 1:length(latentRseq)) {
+    for (l in 1:length(zratioseq)) {
+      for (m in 1:length(ratios)) {
+        meanAE[j, k, l, m] = mean(abs(estimate_mat[ , j, k, l, m] - latentRseq[k]))
+      }
+    }
+  }
 }
-save(out, file = "out.rda", compress = "xz")
+
+meanAAE = array(NA, c(length(types_list), length(latentRseq), length(zratioseq), length(ratios) - 1))
+for (j in 1:length(types_list)) {
+  for (k in 1:length(latentRseq)) {
+    for (l in 1:length(zratioseq)) {
+      for (m in 1:(length(ratios) - 1)) {
+        meanAAE[j, k, l, m] = mean(abs(estimate_mat[ , j, k, l, m + 1] - estimate_mat[ , j, k, l, 1]))
+      }
+    }
+  }
+}
+
+
+
