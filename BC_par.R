@@ -18,7 +18,7 @@ BCvalue = function (tau_grid, d1_grid) {
   value_list <-
     foreach (i = 1:l_tau_grid, .combine = rbind) %:%
       foreach (j = 1:l_d1_grid, .combine = c) %dopar% {
-        zratio1 = d1_grid[j]; zratio2 = NULL
+        zratio1 = d1_grid[j]; zratio2 = NA
         tau = tau_grid[i] * bound_switch(comb = "10", zratio1 = zratio1, zratio2 = zratio2)
         value_list = r_sol(K = tau, zratio1 = zratio1, zratio2 = zratio2, comb = "10", tol = 1e-8, ratio = 0)
       }
