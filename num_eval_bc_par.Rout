@@ -1,5 +1,6 @@
+Loading required package: rngtools
 Loading required package: future
 There were 50 or more warnings (use warnings() to see the first 50)
 > proc.time()
      user    system   elapsed 
-13557.708  2897.946  1853.933 
+14006.143  2977.604  1871.677 
