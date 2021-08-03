@@ -46,7 +46,7 @@ save(BBipol, file = "BB_grid_mixedCCA.rda", compress = "xz")
 
 # grid values that used to create precomputed values
 tau_grid <- round(pnorm(seq(-1.2, 1.2, by =.06), sd = .5), 6) * 2 - 1 
-d1_grid <- d2_grid <- round(pnorm(seq(-1.2, 1.2, by =.12), sd = .5), 6)
+d1_grid <- d2_grid <- round(pnorm(seq(-1.2, 1.2, by =.06), sd = .5), 6)
 
 # create grid input for ipol
 BBipolgrid <- list(tau_grid, d1_grid, d2_grid)

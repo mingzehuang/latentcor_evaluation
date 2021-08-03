@@ -35,7 +35,7 @@ NCvalue = function (tau_grid, d11_grid, d12_grid) {
 
 # grid values that used to create precomputed values
 tau_grid <- round(pnorm(seq(-1.2, 1.2, by =.06), sd = .5), 6) * 2 - 1
-d11_grid <- d12_grid <- round(pnorm(seq(-2.1, 2.1, by =.3)), 6)
+d11_grid <- d12_grid <- round(pnorm(seq(-2.1, 2.1, by =.1)), 6)
 
 # create grid input for ipol
 NCipolgrid <- list(tau_grid, d11_grid, d12_grid)

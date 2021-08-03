@@ -40,7 +40,7 @@ NBvalue = function (tau_grid, d11_grid, d12_grid, d2_grid) {
 
 # grid values that used to create precomputed values
 tau_grid <- round(pnorm(seq(-1.8, 1.8, by =.15), sd = .8), 6) * 2 - 1
-d11_grid <- d12_grid <- d2_grid <- round(pnorm(seq(-1.8, 1.8, by =.3), sd = .8), 6)
+d11_grid <- d12_grid <- d2_grid <- round(pnorm(seq(-1.8, 1.8, by =.15), sd = .8), 6)
 
 # create grid input for ipol
 NBipolgrid <- list(tau_grid, d11_grid, d12_grid, d2_grid)
