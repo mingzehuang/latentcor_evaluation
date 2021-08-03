@@ -7,10 +7,9 @@ library(pcaPP)
 library(doFuture)
 
 load("/scratch/user/sharkmanhmz/latentcor_evaluation_git/latentcor_evaluation/all_grid.rda")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/bridge.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/KendallTau.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/fromKtoR.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/estimateR.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/internal.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/estR.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/GenData.R")
 
 # setup for 100 replication.
 nrep <- 100
@@ -44,11 +43,11 @@ foreach (trueR = 1:length(latentRseq)) %:%
       x1 <- u1
       x2 <- u2
       time_org[i] <- median(microbenchmark::microbenchmark(Kcor_org[i] <-
-      estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "original")$R12, times = 5)$time) / 10^6
+      estR(X = cbind(x1, x2), types = c("tru", "bin"), method = "original")$R[1, 2], times = 5)$time) / 10^6
       time_ml[i] <- median(microbenchmark::microbenchmark(Kcor_ml[i] <-
-      estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "ml")$R12, times = 5)$time) / 10^6
+      estR(X = cbind(x1, x2), types = c("tru", "bin"), ratio = 1)$R[1, 2], times = 5)$time) / 10^6
       time_mlbd[i] <- median(microbenchmark::microbenchmark(Kcor_mlbd[i] <-
-      estimateR_mixed(X1 = x1, X2 = x2, type1 = type1, type2 = type2, method = "approx")$R12, times= 5)$time) / 10^6
+      estR(X = cbind(x1, x2), types = c("tru", "bin"), ratio = 0.9)$R[1, 2], times= 5)$time) / 10^6
     }
     AE <- abs(cbind(Kcor_org - latentRseq[trueR], Kcor_ml - latentRseq[trueR], Kcor_mlbd - latentRseq[trueR],
                     Kcor_ml - Kcor_org, Kcor_mlbd - Kcor_org))
