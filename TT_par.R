@@ -45,7 +45,7 @@ save(TTipol, file = "TT_grid_mixedCCA.rda", compress = "xz")
 
 # grid values that used to create precomputed values
 tau_grid <- round(pnorm(seq(-1.8, 1.8, by =.15), sd = .8), 6) * 2 - 1
-d1_grid <- d2_grid <- round(pnorm(seq(.12, 1.2, by =.03), sd = .5), 6) * 2 - 1
+d1_grid <- d2_grid <- round(pnorm(seq(.1, 2.5, by = .05)), 6) * 2 - 1
 
 # create grid input for ipol
 TTipolgrid <- list(tau_grid, d1_grid, d2_grid)
