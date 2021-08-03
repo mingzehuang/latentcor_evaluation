@@ -1,0 +1,25 @@
+find: 'BC_grid_mixedCCA.rda': No such file or directory
+BC_grid_mixedCCA.rda size is  Bytes.
+find: 'BC_grid.rda': No such file or directory
+BC_grid.rda size is  Bytes.
+BB_grid_mixedCCA.rda size is 303040 Bytes.
+BB_grid.rda size is 20164 Bytes.
+find: 'TC_grid_mixedCCA.rda': No such file or directory
+TC_grid_mixedCCA.rda size is  Bytes.
+find: 'TC_grid.rda': No such file or directory
+TC_grid.rda size is  Bytes.
+TB_grid_mixedCCA.rda size is 907948 Bytes.
+TB_grid.rda size is 26176 Bytes.
+TT_grid_mixedCCA.rda size is 687680 Bytes.
+TT_grid.rda size is 16008 Bytes.
+find: 'NC_grid.rda': No such file or directory
+NC_grid.rda size is  Bytes.
+NB_grid.rda size is 103868 Bytes.
+NT_grid.rda size is 187588 Bytes.
+NN_grid.rda size is 950612 Bytes.
+all_grid.rda size is 1388104 Bytes.
+rm: cannot remove 'BC_grid_mixedCCA.rda': No such file or directory
+rm: cannot remove 'BC_grid.rda': No such file or directory
+rm: cannot remove 'TC_grid_mixedCCA.rda': No such file or directory
+rm: cannot remove 'TC_grid.rda': No such file or directory
+rm: cannot remove 'NC_grid.rda': No such file or directory

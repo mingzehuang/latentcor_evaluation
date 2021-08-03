@@ -5,7 +5,7 @@
 #SBATCH --partition=bigmem
 ##NECESSARY JOB SPECIFICATIONS
 #SBATCH --job-name=all_par            #Set the job name to
-#SBATCH --time=00:30:00               #Set the wall clock limit to 6hr and 30min
+#SBATCH --time=01:00:00               #Set the wall clock limit to 6hr and 30min
 #SBATCH --nodes=1                    #Request 1 node
 #SBATCH --ntasks-per-node=80         #Request 8 tasks/cores per node
 #SBATCH --mem=320GB                     #Request 8GB per node
