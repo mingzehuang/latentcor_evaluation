@@ -1,5 +1,10 @@
 Loading required package: future
+Using Matrix::nearPD since Minimum eigenvalue of latent correlation matrix is -0.00290141708867658smaller than 0.
+Using Matrix::nearPD since Minimum eigenvalue of latent correlation matrix is -0.00290141708867658smaller than 0.
+Using Matrix::nearPD since Minimum eigenvalue of latent correlation matrix is -0.00290141708867658smaller than 0.
+Using Matrix::nearPD since Minimum eigenvalue of latent correlation matrix is -0.00290141708867658smaller than 0.
+Using Matrix::nearPD since Minimum eigenvalue of latent correlation matrix is -0.00290141708867658smaller than 0.
 There were 50 or more warnings (use warnings() to see the first 50)
 > proc.time()
      user    system   elapsed 
-12425.163  2628.670  1773.581 
+12572.352  2622.854  1768.885 
