@@ -5,7 +5,7 @@ library(plotly)
 library(heatmaply)
 library(latentcor)
 
-mtcars_latentcor = estR(mtcars, types = c("con", "ter", "con", "con", "con", "con", "con", "bin", "bin", "ter", "con"), showplot = TRUE)
+mtcars_latentcor = latentcor(mtcars, types = c("con", "ter", "con", "con", "con", "con", "con", "bin", "bin", "ter", "con"), showplot = TRUE)
 
 heatmap_latentcor_mtcars = mtcars_latentcor$plotR
 
