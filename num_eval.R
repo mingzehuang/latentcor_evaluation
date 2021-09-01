@@ -9,7 +9,7 @@ library(doFuture)
 
 load("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/sysdata.rda")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/internal.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/GenData.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/gen_data.R")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/estR.R")
 
 nrep = 1:100
@@ -36,7 +36,7 @@ value =
     } else if ((types[1] == "tru" | types[1] == "bin") & type[2] == "con") {
       XP = list(indseq[ind, 4], NA)
     }
-    simdata = GenData(types = types, rhos = indseq[ind, 3], XP = XP)
+    simdata = gen_data(types = types, rhos = indseq[ind, 3], XP = XP)
     X = simdata$X
     time = median(microbenchmark::microbenchmark(estimate = estR(X = simdata$X, types = unlist(indseq[ind, 2]), ratio = indseq[ind, 5])$R[1, 2], times = 5)$time) / 10^6
     value = c(time, estimate)

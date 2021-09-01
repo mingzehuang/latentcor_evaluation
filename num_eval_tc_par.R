@@ -8,8 +8,8 @@ library(doFuture)
 
 load("/scratch/user/sharkmanhmz/latentcor_evaluation_git/latentcor_evaluation/all_grid.rda")
 source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/internal.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/estR.R")
-source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/GenData.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/latentcor.R")
+source("/scratch/user/sharkmanhmz/latentcor_git/latentcor/R/gen_data.R")
 
 # setup for 100 replication.
 nrep <- 100
@@ -43,11 +43,11 @@ foreach (trueR = 1:length(latentRseq)) %:%
       x1 <- u1
       x2 <- u2
       time_org[i] <- median(microbenchmark::microbenchmark(Kcor_org[i] <-
-      estR(X = cbind(x1, x2), types = c("tru", "con"), method = "original")$R[1, 2], times = 5)$time) / 10^6
+      latentcor(X = cbind(x1, x2), types = c("tru", "con"), method = "original")$R[1, 2], times = 5)$time) / 10^6
       time_ml[i] <- median(microbenchmark::microbenchmark(Kcor_ml[i] <-
-      estR(X = cbind(x1, x2), types = c("tru", "con"), ratio = 1)$R[1, 2], times = 5)$time) / 10^6
+      latentcor(X = cbind(x1, x2), types = c("tru", "con"), ratio = 1)$R[1, 2], times = 5)$time) / 10^6
       time_mlbd[i] <- median(microbenchmark::microbenchmark(Kcor_mlbd[i] <-
-      estR(X = cbind(x1, x2), types = c("tru", "con"), ratio = 0.9)$R[1, 2], times= 5)$time) / 10^6
+      latentcor(X = cbind(x1, x2), types = c("tru", "con"), ratio = 0.9)$R[1, 2], times= 5)$time) / 10^6
     }
     AE <- abs(cbind(Kcor_org - latentRseq[trueR], Kcor_ml - latentRseq[trueR], Kcor_mlbd - latentRseq[trueR],
                     Kcor_ml - Kcor_org, Kcor_mlbd - Kcor_org))

@@ -15,7 +15,7 @@ PlotPair = function(datapair, namepair = c("X", "Y"), title = "Plot X vs Y") {
 rhorep = rep(NA, 100); Rrep = matrix(NA, 100, 3)
 for (rep in 1:100) {
   rho = runif(1, -1, 1)
-  X = GenData(n = 1000, types = c("ter", "con"), rhos = rho, XP = list(c(.3, .5), NA))$X
+  X = gen_data(n = 1000, types = c("ter", "con"), rhos = rho, XP = list(c(.3, .5), NA))$X
   R_nc_org = latentcor(X, types = c("ter", "con"), method = "original")$R
   R_nc_approx = latentcor(X, types = c("ter", "con"), method = "approx")$R
   rhorep[rep] = rho; Rrep[rep, 1] = R_nc_org[2, 1]; Rrep[rep, 2] = R_nc_approx[2, 1]; Rrep[rep, 3] = cor(X)[2, 1]
@@ -47,7 +47,7 @@ for (tp1 in c("con", "bin", "ter", "tru")) {
       rhorep = rep(NA, 100); Rrep = matrix(NA, 100, 4)
       for (rep in 1:100) {
       rho = runif(1, -1, 1)
-      X = GenData(n = 1000, rhos = rho, types = c(tp1, tp2), copulas = c(cp1, cp2))$X
+      X = gen_data(n = 1000, rhos = rho, types = c(tp1, tp2), copulas = c(cp1, cp2))$X
       R_org = latentcor(X, types = c(tp1, tp2), method = "original")$R
       R_approx = latentcor(X, types = c(tp1, tp2), method = "approx")$R
       R_conapprox = latentcor(X, types = c(ifelse(tp1 == "ter", "con", tp1), ifelse(tp2 == "ter", "con", tp2)), method = "original")$R
@@ -78,7 +78,7 @@ for (tp1 in c("con")) {
       rhorep = rep(NA, 100); Rrep = matrix(NA, 100, 3)
       for (rep in 1:100) {
         rho = runif(1, -1, 1)
-        X = GenData(n = 1000, rhos = rho, types = c(tp1, tp2), copulas = c(cp1, cp2))$X
+        X = gen_data(n = 1000, rhos = rho, types = c(tp1, tp2), copulas = c(cp1, cp2))$X
         R_org = latentcor(X, types = c(tp1, tp2), method = "original")$R
         R_conapprox = latentcor(X, types = c("con", "con"), method = "original")$R        
         rhorep[rep] = rho; Rrep[rep, 1] = R_org[2, 1]; Rrep[rep, 2] = R_conapprox[2, 1]; Rrep[rep, 3] =  cor(X)[2, 1]

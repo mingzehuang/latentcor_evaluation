@@ -2,7 +2,7 @@ library(microbenchmark)
 library(latentcor)
 # The timing for simple simulation example
 set.seed(1234)
-X = GenData(n = 1000, types = c("ter", "con"), rhos = runif(1, -1, 1), XP = list(c(.3, .5), NA))$X
+X = gen_data(n = 1000, types = c("ter", "con"), rhos = runif(1, -1, 1), XP = list(c(.3, .5), NA))$X
 microbenchmark(latentcor(X, types = c("ter", "con"), method = "original"), latentcor(X, types = c("ter", "con")))
 # Unit: milliseconds
 # min     lq     mean    median     uq     max     neval
